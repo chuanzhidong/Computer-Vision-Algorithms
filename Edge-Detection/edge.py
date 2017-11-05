@@ -29,7 +29,6 @@ def conv(image, kernel):
     for m in range(Hi):
         for n in range(Wi):
             image_splice = padded[m:m+Hk, n:n+Wk]
-            #kernel_t = np.transpose(kernel)
             out[m][n] = np.sum(image_splice * np.flipud(np.fliplr(kernel)))
     return out
 
@@ -38,9 +37,6 @@ def gaussian_kernel(size, sigma):
     
     This function follows the gaussian kernel formula,
     and creates a kernel matrix.
-
-    Hints:
-    - Use np.pi and np.exp to compute pi and exp
     
     Args:
         size: int of the size of output matrix
@@ -62,9 +58,6 @@ def gaussian_kernel(size, sigma):
 def partial_x(img):
     """ Computes partial x-derivative of input img.
 
-    Hints: 
-        - You may use the conv function in defined in this file.
-
     Args:
         img: numpy array of shape (H, W)
     Returns:
@@ -83,9 +76,6 @@ def partial_x(img):
 
 def partial_y(img):
     """ Computes partial y-derivative of input img.
-
-    Hints: 
-        - You may use the conv function in defined in this file.
 
     Args:
         img: numpy array of shape (H, W)

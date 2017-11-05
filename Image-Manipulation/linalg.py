@@ -11,10 +11,7 @@ def dot_product(vector1, vector2):
         out: numpy array of shape (x,x) (scalar if x = 1)
     """
     out = None
-    ### YOUR CODE HERE
     out = np.dot(vector1, vector2)
-    ### END YOUR CODE
-
     return out
 
 def matrix_mult(M, vector1, vector2):
@@ -28,12 +25,9 @@ def matrix_mult(M, vector1, vector2):
         out: numpy matrix of shape (1, x)
     """
     out = None
-    ### YOUR CODE HERE
     temp1 = np.dot(vector1,vector2)
     temp2 = np.dot(M, vector1)
     out = np.dot(temp1, temp2)
-    ### END YOUR CODE
-
     return out
 
 def svd(matrix):
@@ -49,10 +43,7 @@ def svd(matrix):
     u = None
     s = None
     v = None
-    ### YOUR CODE HERE
     u, s, v = np.linalg.svd(matrix, full_matrices = True)
-    ### END YOUR CODE
-
     return u, s, v
 
 def get_singular_values(matrix, n):
@@ -66,9 +57,7 @@ def get_singular_values(matrix, n):
     """
     singular_values = None
     u, s, v = svd(matrix)
-    ### YOUR CODE HERE
     singular_values = s[:n]
-    ### END YOUR CODE
     return singular_values
 
 def eigen_decomp(matrix):
@@ -81,9 +70,7 @@ def eigen_decomp(matrix):
     """
     w = None
     v = None
-    ### YOUR CODE HERE
     w,v = np.linalg.eig(matrix)
-    ### END YOUR CODE
     return w, v
 
 def get_eigen_values_and_vectors(matrix, num_values):
@@ -97,19 +84,12 @@ def get_eigen_values_and_vectors(matrix, num_values):
         eigen_vectors: array of shape (m, n)
     """
     w, v = eigen_decomp(matrix)
-    #print(w)
-    #print(v)
     eigen_values = []
     eigen_vectors = []
-    ### YOUR CODE HERE
     
     index_array = np.argsort(w)[::-1][0:num_values]
     
     eigen_values = w[index_array]
     eigen_vectors = v[:,index_array]
-
     
-    #eigen_values = sorted_eigen_values[0:num_values]
-    #eigen_vectors = sorted_eigen_vectors[0:num_values]
-    ### END YOUR CODE
     return eigen_values, eigen_vectors

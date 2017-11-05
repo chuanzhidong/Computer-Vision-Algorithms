@@ -11,10 +11,6 @@ def harris_corners(img, window_size=3, k=0.04):
     """
     Compute Harris corner response map. Follow the math equation
     R=Det(M)-k(Trace(M)^2).
-
-    Hint:
-        You may use the function scipy.ndimage.filters.convolve, 
-        which is already imported above
         
     Args:
         img: Grayscale image of shape (H, W)
@@ -76,9 +72,6 @@ def simple_descriptor(patch):
     
     The normalization will make the descriptor more robust to change 
     in lighting condition.
-    
-    Hint:
-        If a denominator is zero, divide by 1 instead.
     
     Args:
         patch: grayscale image patch of shape (h, w)
@@ -161,9 +154,6 @@ def match_descriptors(desc1, desc2, threshold=0.5):
 
 def fit_affine_matrix(p1, p2):
     """ Fit affine matrix such that p2 * H = p1 
-    
-    Hint:
-        You can use np.linalg.lstsq function to solve the problem. 
         
     Args:
         p1: an array of shape (M, P)

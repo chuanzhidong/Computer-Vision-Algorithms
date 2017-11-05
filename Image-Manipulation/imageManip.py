@@ -15,14 +15,7 @@ def load(image_path):
         out: numpy array of shape(image_height, image_width, 3)
     """
     out = None
-
-    ### YOUR CODE HERE
-    # Use skimage io.imread
-    
     out = io.imread(image_path)
-    
-    ### END YOUR CODE
-
     return out
 
 
@@ -38,11 +31,7 @@ def change_value(image):
     """
 
     out = None
-
-    ### YOUR CODE HERE
     out = 0.5*image*image
-    ### END YOUR CODE
-
     return out
 
 
@@ -56,11 +45,7 @@ def convert_to_grey_scale(image):
         out: numpy array of shape(image_height, image_width, 3)
     """
     out = None
-
-    ### YOUR CODE HERE
     out = color.rgb2gray(image)
-    ### END YOUR CODE
-
     return out
 
 def rgb_decomposition(image, channel):
@@ -75,8 +60,6 @@ def rgb_decomposition(image, channel):
     """
 
     out = None
-
-    ### YOUR CODE HERE
     
     image = image.copy()
     RGB = {'R':0, 'G':1, 'B':2}
@@ -85,7 +68,6 @@ def rgb_decomposition(image, channel):
     image[:,:, select].fill(0)
     out = image   
     
-    ### END YOUR CODE
     return out
 
 def lab_decomposition(image, channel):
@@ -102,13 +84,11 @@ def lab_decomposition(image, channel):
     lab = color.rgb2lab(image)
     out = None
 
-    ### YOUR CODE HERE
     lab = lab.copy()
     LAB = {'L':0, 'A':1, 'B':2}
     select = LAB[channel]
     
     out = lab[:,:,select]
-    ### END YOUR CODE
 
     return out
 
@@ -126,13 +106,11 @@ def hsv_decomposition(image, channel='H'):
     hsv = color.rgb2hsv(image)
     out = None
 
-    ### YOUR CODE HERE
     hsv = hsv.copy()
     HSV = {'H':0, 'S':1, 'V':2}
     select = HSV[channel]
     
     out = hsv[:,:,select]
-    ### END YOUR CODE
 
     return out
 
@@ -151,7 +129,6 @@ def mix_images(image1, image2, channel1, channel2):
     """
 
     out = None
-    ### YOUR CODE HERE
     
     height = image1.shape[0]
     width = image1.shape[1]
@@ -161,6 +138,4 @@ def mix_images(image1, image2, channel1, channel2):
     
     out[:, width/2:width, :] = decomp_2[:, width/2:width, :]
     
-    ### END YOUR CODE
-
     return out

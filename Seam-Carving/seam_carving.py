@@ -8,8 +8,6 @@ def energy_function(image):
     For each pixel, we will sum the absolute value of the gradient in each direction.
     Don't forget to convert to grayscale first.
 
-    Hint: you can use np.gradient here
-
     Args:
         image: numpy array of shape (H, W, 3)
 
@@ -512,8 +510,6 @@ def reduce_fast(image, size, axis=1, efunc=energy_function, cfunc=compute_cost):
     Use your own implementation (you can use auxiliary functions if it helps like `energy_fast`)
     to implement a faster version of `reduce`.
 
-    Hint: do we really need to compute the whole cost map again at each iteration?
-
     Args:
         image: numpy array of shape (H, W, C)
         size: size to reduce height or width to (depending on axis)
@@ -564,9 +560,5 @@ def remove_object(image, mask):
         out: numpy array of shape (H, W, 3)
     """
     out = np.copy(image)
-
-    ### YOUR CODE HERE
     pass
-    ### END YOUR CODE
-
     return out
