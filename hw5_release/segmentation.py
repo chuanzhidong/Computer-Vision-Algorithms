@@ -33,8 +33,15 @@ def kmeans(features, k, num_iters=100):
     idxs = np.random.choice(N, size=k, replace=False) #array of k values with the values in range of N
     centers = features[idxs] #specific feature vectors chosen as centers
     assignments = np.zeros(N)
-
+    previous_centers = centers*0.0
+    
     for n in range(num_iters):
+        
+        if np.allclose(centers, previous_centers):
+            break
+        
+        previous_centers = centers.copy()
+            
         #Loop through every feature vector in features array
         for i in range(N):
             distances = cdist([features[i]], centers)
@@ -44,7 +51,7 @@ def kmeans(features, k, num_iters=100):
         for i in range(k):
             indices = np.where(assignments == i)
             centers[i] = np.mean(features[indices], axis=0)
-           
+
     return assignments
 
 def kmeans_fast(features, k, num_iters=100):
@@ -75,8 +82,12 @@ def kmeans_fast(features, k, num_iters=100):
     idxs = np.random.choice(N, size=k, replace=False)
     centers = features[idxs]
     assignments = np.zeros(N)
-
+    previous_centers = centers*0.0
+    
     for n in range(num_iters):
+        if np.allclose(centers, previous_centers,):
+            break
+        previous_centers = centers.copy()
         assignments = np.argmin(cdist(features, centers), axis = 1)
         for i in range(k):
             centers[i] = np.mean(features[np.where(assignments == i)], axis=0)
@@ -127,8 +138,20 @@ def hierarchical_clustering(features, k):
     n_clusters = N
 
     while n_clusters > k:
-        
+        dist = squareform(pdist(centers))
+        dist[dist==0] = np.inf
+        i, j = np.unravel_index(np.argmin(dist), dist.shape)
 
+        assignments[np.where(assignments == j)] = i
+        centers[assignments == i] = np.mean(features[assignments == i], axis = 0)
+        n_clusters -= 1
+        
+    idxs = np.unique(assignments)
+    for i in range(len(idxs)):
+        assignments[assignments == idxs[i]] = i
+        
+        
+        
     return assignments
 
 
@@ -217,9 +240,15 @@ def compute_accuracy(mask_gt, mask):
     """
 
     accuracy = None
-    ### YOUR CODE HERE
-    pass
-    ### END YOUR CODE
+    
+    H,W = mask_gt.shape
+    
+    TP = (mask_gt*mask).sum()
+    TN = ((1-mask_gt)*(1-mask)).sum()
+    
+    accuracy = np.count_nonzero(mask_gt == mask)/(H*W)
+    
+    #accuracy = (TP+TN)/(P+N)
 
     return accuracy
 
