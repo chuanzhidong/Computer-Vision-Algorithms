@@ -1,7 +1,10 @@
 import numpy as np
 import random
 from scipy.spatial.distance import squareform, pdist, cdist
+from skimage import color
+from skimage import io
 from skimage.util import img_as_float
+from scipy.stats import entropy
 
 ### Clustering Methods
 def kmeans(features, k, num_iters=100):
@@ -216,11 +219,130 @@ def my_features(img):
         features - array of (H * W, C)
     """
     features = None
-    ### YOUR CODE HERE
-    pass
-    ### END YOUR CODE
+    
+    H, W, C = img.shape
+    features = np.zeros((H*W, C+2))
+    
+    features[:,0:C] = img.reshape(H*W, C)
+    
+    img_gray = color.rgb2gray(img)
+    
+    G, theta = gradient(img_gray)
+    entro = np.zeros((H,W))
+    padded = np.pad(theta, ((15,15),(15,15)), mode = 'constant')
+    for i in range(H):
+        for j in range(W):
+            temp = np.histogram(padded[i:i+15, j:j+15], 8)[0]
+            entro[i][j] = entropy(temp)
+    features[:, C] = entro.reshape((H*W))
+    
+    kernel = np.zeros((20, 20))
+    kernel.fill(1)
+    weighted_gradient = conv(img_gray, kernel)
+    features[:, C+1] = weighted_gradient.reshape((H*W))
+    
+    features = (features - np.mean(features,axis=0))/np.std(features, axis=0)
+
+
     return features
     
+def gradient(img):
+    """ Returns gradient magnitude and direction of input img.
+
+    Args:
+        img: Grayscale image. Numpy array of shape (H, W)
+
+    Returns:
+        G: Magnitude of gradient at each pixel in img.
+            Numpy array of shape (H, W)
+        theta: Direction(in degrees, 0 <= theta < 360) of gradient
+            at each pixel in img. Numpy array of shape (H, W)
+    """
+    G = np.zeros(img.shape)
+    theta = np.zeros(img.shape)
+    
+    G = np.sqrt(partial_x(img)**2 + partial_y(img)**2)
+    theta = (np.arctan2(partial_y(img), partial_x(img))*180/np.pi + 360)%360
+    
+
+    return G, theta
+
+def conv(image, kernel):
+    """ An implementation of convolution filter.
+
+    This function uses element-wise multiplication and np.sum()
+    to efficiently compute weighted sum of neighborhood at each
+    pixel.
+
+    Args:
+        image: numpy array of shape (Hi, Wi)
+        kernel: numpy array of shape (Hk, Wk)
+
+    Returns:
+        out: numpy array of shape (Hi, Wi)
+    """
+    Hi, Wi = image.shape
+    Hk, Wk = kernel.shape
+    out = np.zeros((Hi, Wi))
+
+    # For this assignment, we will use edge values to pad the images.
+    # Zero padding will make derivatives at the image boundary very big,
+    # whereas we want to ignore the edges at the boundary.
+    pad_width0 = Hk // 2
+    pad_width1 = Wk // 2
+    pad_width = ((pad_width0,pad_width0),(pad_width1,pad_width1))
+    padded = np.pad(image, pad_width, mode='edge')
+
+    for m in range(Hi):
+        for n in range(Wi):
+            image_splice = padded[m:m+Hk, n:n+Wk]
+            #kernel_t = np.transpose(kernel)
+            out[m][n] = np.sum(image_splice * np.flipud(np.fliplr(kernel)))
+    return out
+
+def partial_x(img):
+    """ Computes partial x-derivative of input img.
+
+    Hints: 
+        - You may use the conv function in defined in this file.
+
+    Args:
+        img: numpy array of shape (H, W)
+    Returns:
+        out: x-derivative image
+    """
+
+    out = None
+
+    kernel_x = np.array(
+    [[ 0, 0, 0],
+     [ 0.5, 0, -0.5],
+     [ 0, 0, 0]])
+    out = conv(img, kernel_x)
+
+    return out
+
+def partial_y(img):
+    """ Computes partial y-derivative of input img.
+
+    Hints: 
+        - You may use the conv function in defined in this file.
+
+    Args:
+        img: numpy array of shape (H, W)
+    Returns:
+        out: y-derivative image
+    """
+
+    out = None
+
+    kernel_y = np.array(
+    [[ 0, 0.5, 0],
+     [ 0, 0, 0],
+     [ 0, -0.5, 0]])
+    out = conv(img, kernel_y)
+
+    return out
 
 ### Quantitative Evaluation
 def compute_accuracy(mask_gt, mask):
