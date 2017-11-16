@@ -30,6 +30,7 @@ class PCA(object):
         self.mean = None   # empirical mean, has shape (D,)
         X_centered = None  # zero-centered data
 
+        # YOUR CODE HERE
         # 1. Compute the mean and store it in self.mean
         # 2. Apply either method to `X_centered`
         self.mean = np.mean(X, axis = 0)
@@ -40,6 +41,7 @@ class PCA(object):
         else:
             self.W_pca, _ = self._eigen_decomp(X_centered)
         
+        # END YOUR CODE
 
         # Make sure that X_centered has mean zero
         assert np.allclose(X_centered.mean(), 0.0)
@@ -207,8 +209,23 @@ class LDA(object):
         # Solve generalized eigenvalue problem for matrices `scatter_between` and `scatter_within`
         # Use `scipy.linalg.eig` instead of numpy's eigenvalue solver.
         # Don't forget to sort the values and vectors in descending order.
-        e_vals, e_vecs = scipy.linalg.eig(np.linalg.inv(scatter_within)*scatter_between)
+        
+        #sort in descending order.
+        
+        #w, v = np.linalg.eig(cov)
+        
+        e_vals, e_vecs = scipy.linalg.eig(scatter_between, scatter_within)
+        
+        #print(e_vecs.shape)
+        
+        index_array = np.argsort(e_vals)[::-1][0:]
+        #print(index_array)
+    
+        e_vals = e_vals[index_array]
+        e_vecs = e_vecs[:,index_array]
         # END YOUR CODE
+        
+        #print(e_vecs.shape)
 
         self.W_lda = e_vecs
 
@@ -242,18 +259,17 @@ class LDA(object):
         scatter_within = np.zeros((D, D))
 
         for i in np.unique(y):
-            # YOUR CODE HERE
             # Get the covariance matrix for class i, and add it to scatter_within
             #print(X.shape)
             X_i = X[y==i]
             #print(X_i.shape)
             X_centered = X_i - np.mean(X_i, axis = 0)
             #print(X_centered.shape)
+            #print(X_centered.shape)
             S_i = X_centered.T.dot(X_centered)
             scatter_within += S_i
             #print(S_i.shape)
-            # END YOUR CODE
-
+        #print(scatter_within)
         return scatter_within
 
     def _between_class_scatter(self, X, y):
@@ -284,9 +300,12 @@ class LDA(object):
             mu_i = np.mean(X_i, axis = 0)
             Ni, _ = X_i.shape
             temp = mu_i - mu
-            sub = Ni*temp.T.dot(temp)
+            length = temp.shape[0]
+            temp = np.reshape(temp, (length, 1))
+                                          
+            #sub = Ni*(temp.T.dot(temp))
+            sub = Ni*np.multiply(temp.T, temp)
             scatter_between += sub
-
         return scatter_between
 
     def transform(self, X, n_components):
